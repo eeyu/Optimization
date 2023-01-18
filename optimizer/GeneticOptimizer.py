@@ -18,7 +18,7 @@ import math
 class GeneticAlgorithmOptimizer(Optimizer):
     def __init__(self, initialPopulation, costEvaluator):
         initialValue = initialPopulation[0] # arbitraty: choose first value
-        super().__init__(initialValue, costEvaluator);
+        super().__init__(initialValue, costEvaluator)
         self.population = initialPopulation
         self.populationSize = np.ma.size(initialPopulation, 0)
         self.debugMessagesList = []

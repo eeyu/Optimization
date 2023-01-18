@@ -9,7 +9,7 @@ class DebugMessage():
     def __init__(self):
         self.messages = {}
         self.layer = 0
-        self.prefix = "";
+        self.prefix = ""
         
     def setLayer(self, layer):
         self.layer = layer

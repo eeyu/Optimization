@@ -11,13 +11,14 @@ import optimizer.CostEvaluator as CostEvaluator
 from visualizer.DebugMessage import DebugMessage
 
 
+
 class Optimizer(ABC):
-    def __init__(self, initialValue, costEvaluator):
+    def __init__(self, initialValue, costEvaluator : CostEvaluator):
         self.value = initialValue
         self.costEvaluator = costEvaluator
 
         self.stepCount = 0
-        self.valueHistory = np.array([initialValue])
+        self.valueHistory = [initialValue]
         self.costHistory = np.array([costEvaluator.getCost(initialValue)])
         
         self.numFeatures = initialValue.size
@@ -31,7 +32,7 @@ class Optimizer(ABC):
         self.debugMessage = DebugMessage()
     
     @abstractmethod
-    def takeStepAndGetValueAndCost(self):
+    def takeStepAndGetValueAndCost(self) -> tuple[np.array, float]:
         pass
     
     def step(self):
@@ -43,8 +44,8 @@ class Optimizer(ABC):
         self.value = value
         
         self.debugMessage.appendMessage("cost", cost)
-        
-        self.valueHistory = np.append(self.valueHistory, [self.value], axis=0)
+        self.debugMessage.appendMessage("value", value)
+        self.valueHistory.append(self.value)
         self.costHistory = np.append(self.costHistory, cost)
         self.stepCount += 1
         
@@ -97,9 +98,6 @@ class Optimizer(ABC):
     def printDebug(self):
         print(self.debugMessage)
                 
-    # def stoppingConditionsHaveBeenMet(self):
-    #     return self.hasReachedMinimum(convergenceThreshold) or self.stepCount >= maxCount
-    
     def bindEndEarly(self, endEarly):
         self.endEarly = endEarly
 
@@ -108,52 +106,7 @@ class OptimizationEndConditions:
     maxSteps : int
     convergenceThreshold : float
     
-class GradientDescentOptimizer(Optimizer):
-    def __init__(self, initialValue, costEvaluator, optimizationParameters):
-        super().__init__(initialValue, costEvaluator)
-        self.optimizationParameters = optimizationParameters
-        self.optimizationStepSize = optimizationParameters.optimizationStepSize
-        self.gradientStepFactor = optimizationParameters.gradientStepFactor
-        self.optimizationStepSizeScaling = optimizationParameters.optimizationStepSizeScaling
-        self.scaleEveryNSteps = optimizationParameters.scaleEveryNSteps
-        
-    def findValueGradient(self):
-        numDim = self.value.size
-        valueGradient = np.zeros(numDim)
-        currentCost = self.costHistory[-1]
-        #construct gradient by sampling in every direction
-        for i in range(numDim):
-            valueTemp = np.copy(self.value)
-            valueTemp[i] += self.gradientStepFactor * self.optimizationStepSize * self.optimizationParameters.weightedScaling[i]
-            np.putmask(valueTemp, valueTemp<0, 0)
-            costDim = self.costEvaluator.getCost(valueTemp)
-            valueGradient[i] = currentCost - costDim
-        gradientNorm = np.linalg.norm(valueGradient)
-        valueGradient /= gradientNorm
-        return valueGradient * self.optimizationParameters.weightedScaling
-    
-    def takeStepAndGetValueAndCost(self):
-        if ((self.stepCount + 1) % self.scaleEveryNSteps == 0):
-            self.optimizationStepSize *= self.optimizationStepSizeScaling
-            
-        valueGradientDirection = self.findValueGradient()
-        valueStepVector = self.optimizationStepSize * valueGradientDirection
-        value = self.value + valueStepVector
-    #hack
-        np.putmask(value, value<0, 0)
-        cost = self.costEvaluator.getCost(value)
-        return value, cost
 
-       
-    
-    
-@dataclass
-class GDOptimizationParameters:
-    optimizationStepSize : float
-    gradientStepFactor : float
-    optimizationStepSizeScaling : float
-    scaleEveryNSteps : int
-    weightedScaling : np.ndarray
     
     
     

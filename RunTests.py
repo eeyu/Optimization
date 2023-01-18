@@ -1,4 +1,4 @@
-from test import TestDogUtil, TestDynamics, TestFootModel, TestGeneticAlgorithm, TestGradientDescentOptimizer, TestNeuralNetwork, TestSimulation
+from unitTests import TestGradientDescentOptimizer
 
 if __name__ == "__main__":
     # TestGeneticAlgorithm.main()

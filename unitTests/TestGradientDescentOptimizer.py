@@ -10,7 +10,8 @@ from dataclasses import dataclass
 import matplotlib.pyplot as mpl;
 from optimizer.CostEvaluator import CostEvaluator
 from mpl_toolkits.mplot3d import Axes3D
-from optimizer.Optimizer import GradientDescentOptimizer, OptimizationParameters, OptimizationEndConditions
+from optimizer.GradientDescent import GradientDescentOptimizer, GDOptimizationParameters
+from optimizer.Optimizer import OptimizationEndConditions
 
 class ParabolicCostEvaluator(CostEvaluator):
     def __init__(self, a, b):
@@ -33,7 +34,7 @@ class ParaboloidCostEvaluator(CostEvaluator):
     
     
 def optimizeParabola() :
-    optimizationParameters = OptimizationParameters(0.5, 0.5, 0.9, 3);
+    optimizationParameters = GDOptimizationParameters(0.5, 0.5, 0.9, 3, [1]);
     initialValue = np.array([5.0]);
     costEvaluator = ParabolicCostEvaluator(1.0, 0);
     optimizer = GradientDescentOptimizer(initialValue, costEvaluator, optimizationParameters);
@@ -52,7 +53,7 @@ def optimizeParabola() :
 def optimizeParaboloid():
     a = 1.0
     b = 1.0
-    optimizationParameters = OptimizationParameters(0.1, 0.001, 0.95, 10);
+    optimizationParameters = GDOptimizationParameters(0.1, 0.001, 0.95, 10, [1,1]);
     initialValue = np.array([5.0, 5.0]);
     costEvaluator = ParaboloidCostEvaluator(a, b);
     optimizer = GradientDescentOptimizer(initialValue, costEvaluator, optimizationParameters);
