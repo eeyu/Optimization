@@ -66,4 +66,7 @@ class BayesianOptimizer(Optimizer):
         # self.debugMessage.appendMessage("AcquisitionFunction", functionList)
         return bestPosition
 
+    def getPosterior(self):
+        return self.posteriorModel
+
 

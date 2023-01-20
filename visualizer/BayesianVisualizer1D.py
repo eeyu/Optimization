@@ -33,6 +33,7 @@ class BayesianVisualizer1D():
         self.costEvaluator = costEvaluator       
         self.domain = domain
         self.optimizer = optimizer
+        self.posteriorModel = optimizer.getPosterior()
         self.domainX = self.domain.getDomainList().flatten()
 
         self.sampleXList = []
@@ -94,8 +95,11 @@ class BayesianVisualizer1D():
 
         # Costs
         value, cost = self.optimizer.getCurrentStateAndCost()
+        domain, posterior = self.domain.createFunctionEvaluationOnList(self.posteriorModel.mean)
         self.costPoint.setData(x=value, y=np.array([cost]))
         self.sampleCurve.setData(x=self.sampleXList, y=self.sampleYList)
+        self.posteriorCurve.setData(x=self.domainX, y=posterior.flatten())
+
 
 
 
@@ -116,10 +120,12 @@ class BayesianVisualizer1D():
         costplot.setLabel('bottom', 'x')
 
         domain, costs = self.domain.createFunctionEvaluationOnList(self.costEvaluator.getCost)
+        domain, posterior = self.domain.createFunctionEvaluationOnList(self.posteriorModel.mean)
         self.costCurve = costplot.plot(x=self.domainX, y=costs.flatten())
         value, cost = self.optimizer.getCurrentStateAndCost()
         self.costPoint = costplot.plot(x=value, y=np.array([cost]), symbolBrush=(255,0,0), symbolPen='w')
         self.sampleCurve = costplot.plot(x=value, y=np.array([cost]), symbolBrush=(0,255,0), symbolPen='w',  pen=(255,0,0, 0))
+        self.posteriorCurve = costplot.plot(x=self.domainX, y=posterior.flatten(), pen=(255,0,0))
 
         return costplot
         

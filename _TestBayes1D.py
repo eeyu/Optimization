@@ -12,16 +12,13 @@ class ParaboloidCostEvaluator(CostEvaluator):
     def getCost(self, value):
         return value * value
 
-priorModel = BasicGaussianModel(stdev=0.1, scale=0.5)
+priorModel = BasicGaussianModel(stdev=1.0, scale=0.1)
 acquisitionFunction = ExpectedImprovementAcquisition()
 costFunction = ParaboloidCostEvaluator()
-domain = Domain(min=[-5], max=[5], resolution=20)
+domain = Domain(min=np.array([-5]), max=np.array([5]), resolution=60)
 initialPoint = np.array([3])
 
 optmizer = BayesianOptimizer(priorModel=priorModel, acquisitionFunction=acquisitionFunction, costFunction=costFunction, domain=domain, initialSample=initialPoint)
-# for i in range(10):
-#     optmizer.step()
-#     optmizer.printDebug()
 plotter = BayesianVisualizer1D(costFunction, domain, optmizer)
 
 if __name__ == '__main__':

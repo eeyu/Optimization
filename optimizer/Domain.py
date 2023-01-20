@@ -9,8 +9,7 @@ class Domain(ABC):
     def __init__(self, min, max, resolution=10):
         # We construct the mesh representing the bounds
         dim = len(min)
-        grid = np.linspace(min, max, resolution) # create intervals on each axis
-        # TODO This step is pretty fucked up...fix it
+        grid = np.linspace(min, max, resolution).T # create intervals on each axis
         mesh=np.array(np.meshgrid(*grid)) # turn axis intervals into a mesh
         numPoints = int(mesh.size / dim)
         list = np.reshape(mesh.T, (numPoints, dim), 'F') # turn mesh into a list of numbers
